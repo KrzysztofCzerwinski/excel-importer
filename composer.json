@@ -1,0 +1,23 @@
+{
+  "name": "kczer/excel-importer",
+  "type": "library",
+  "description": "Library for configurable EXCEL data imports",
+  "keywords": ["excel","import","data","validate"],
+  "homepage": "https://yourcompany.com",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Krzysztof Czerwiński",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Kczer\\ExcelImporter\\": "src/"
+    }
+  },
+  "require": {
+    "phpoffice/phpspreadsheet": "^1.18",
+    "ext-ctype": "*"
+  }
+}
