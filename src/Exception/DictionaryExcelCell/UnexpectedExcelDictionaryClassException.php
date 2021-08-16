@@ -11,6 +11,6 @@ class UnexpectedExcelDictionaryClassException extends Exception
 {
     public function __construct(string $givenClass, Throwable $previous = null)
     {
-        parent::__construct(sprintf('Class %s does not extend %s', $givenClass, AbstractDictionaryExcelCell::class), 0, $previous);
+        parent::__construct(sprintf('Class %s does not exists or does not extend %s', $givenClass, AbstractDictionaryExcelCell::class), 0, $previous);
     }
 }
