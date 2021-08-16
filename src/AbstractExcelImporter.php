@@ -26,15 +26,6 @@ abstract class AbstractExcelImporter
     /** @var ExcelRow[] */
     private $excelRows;
 
-
-    /**
-     * @throws UnexpectedExcelCellClassException
-     */
-    public function __construct()
-    {
-        $this->skeletonExcelCells = $this->createSkeletonExcelCells();
-    }
-
     /**
      * @return ExcelRow[]
      */
@@ -89,6 +80,8 @@ abstract class AbstractExcelImporter
      */
     public function parseExcelData(string $excelFileAbsolutePath, bool $skipFirstRow = true): self
     {
+        $this->skeletonExcelCells = $this->createSkeletonExcelCells();
+
         try {
             $sheet = IOFactory::load($excelFileAbsolutePath)->getActiveSheet();
 
