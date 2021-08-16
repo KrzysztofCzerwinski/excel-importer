@@ -19,6 +19,7 @@
   "require": {
     "phpoffice/phpspreadsheet": "^1.18",
     "ext-ctype": "*",
-    "php": "^7.2 || ^8.0"
+    "php": "^7.2 || ^8.0",
+    "doctrine/annotations": "^1.13"
   }
 }

@@ -25,7 +25,7 @@ class ExcelRowFactory
         foreach ($skeletonExcelCells as $columnKey => $skeletonExcelCell) {
             if (!key_exists($columnKey, $rawCellValues)) {
 
-                throw new EmptyExcelColumnException($skeletonExcelCell->getName(), $columnKey);
+                throw new EmptyExcelColumnException($skeletonExcelCell, $columnKey);
             }
             $excelCells[$columnKey] = (clone $skeletonExcelCell)->setRawValue($rawCellValues[$columnKey]);
         }

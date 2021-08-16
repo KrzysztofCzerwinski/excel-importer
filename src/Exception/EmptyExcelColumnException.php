@@ -4,32 +4,38 @@ declare(strict_types=1);
 namespace Kczer\ExcelImporter\Exception;
 
 use Exception;
+use Kczer\ExcelImporter\ExcelElement\ExcelCell\AbstractExcelCell;
 use Throwable;
+use function get_class;
 
 class EmptyExcelColumnException extends Exception
 {
-    /** @var string */
-    private $cellName;
+    /** @var AbstractExcelCell */
+    private $excelCell;
 
     /** @var string|int */
     private $columnKey;
 
     /**
-     * @param string $cellName
+     * @param AbstractExcelCell $excelCell
      * @param string|int $columnKey
      * @param Throwable|null $previous
      */
-    public function __construct(string $cellName, $columnKey, Throwable $previous = null)
+    public function __construct(AbstractExcelCell $excelCell, $columnKey, Throwable $previous = null)
     {
-        $this->cellName = $cellName;
+        $this->excelCell = $excelCell;
         $this->columnKey = $columnKey;
 
-        parent::__construct(sprintf("No data provided in column '%s' of key '%s'", $cellName, (string)$columnKey), 0, $previous);
+        parent::__construct(
+            sprintf("Empty column '%s' of key '%s', expected %s compatible values", $excelCell->getName(), (string)$columnKey, get_class($excelCell)),
+            0,
+            $previous
+        );
     }
 
-    public function getCellName(): string
+    public function getCellName(): AbstractExcelCell
     {
-        return $this->cellName;
+        return $this->excelCell;
     }
 
     /**
