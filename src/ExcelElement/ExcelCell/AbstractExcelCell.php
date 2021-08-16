@@ -22,7 +22,7 @@ abstract class AbstractExcelCell
     private $required;
 
 
-    public function __construct(string $name, bool $required = false)
+    public function __construct(string $name, bool $required = true)
     {
         $this->name = $name;
         $this->required = $required;

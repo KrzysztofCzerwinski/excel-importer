@@ -15,7 +15,7 @@ abstract class AbstractDictionaryExcelCell extends AbstractExcelCell
     /** @var array */
     private $dictionary;
 
-    public function __construct(string $name, bool $required = false)
+    public function __construct(string $name, bool $required = true)
     {
         parent::__construct($name, $required);
 
