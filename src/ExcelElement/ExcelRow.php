@@ -6,6 +6,7 @@ namespace Kczer\ExcelImporter\ExcelElement;
 use Kczer\ExcelImporter\ExcelElement\ExcelCell\AbstractExcelCell;
 use function array_filter;
 use function array_map;
+use function array_merge;
 use function implode;
 use function in_array;
 
@@ -14,6 +15,8 @@ class ExcelRow
     /** @var AbstractExcelCell[] */
     private $excelCells;
 
+    /** @var string[] */
+    private $errorMessages = [];
 
     /**
      * @param AbstractExcelCell[] $excelCells
@@ -32,15 +35,29 @@ class ExcelRow
         return $this->excelCells;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getErrorMessages(): array
+    {
+        return $this->errorMessages;
+    }
+
+
+    public function addErrorMessage(string $errorMessage): void
+    {
+        $this->errorMessages[] = $errorMessage;
+    }
 
     public function hasErrors(): bool
     {
-        return in_array(
-            true,
-            array_map(static function (AbstractExcelCell $excelCell): bool {
-                return $excelCell->hasError();
-            }, $this->excelCells)
-        );
+        return !empty($this->errorMessages) ||
+            in_array(
+                true,
+                array_map(static function (AbstractExcelCell $excelCell): bool {
+                    return $excelCell->hasError();
+                }, $this->excelCells)
+            );
     }
 
     /**
@@ -53,9 +70,12 @@ class ExcelRow
         return implode(
             $separator,
             array_filter(
-                array_map(static function (AbstractExcelCell $excelCell) use ($separator): ?string {
-                    return $excelCell->getErrorMessage();
-                }, $this->excelCells)
+                array_merge(
+                    $this->errorMessages,
+                    array_map(static function (AbstractExcelCell $excelCell) use ($separator): ?string {
+                        return $excelCell->getErrorMessage();
+                    }, $this->excelCells)
+                )
             )
         );
     }
