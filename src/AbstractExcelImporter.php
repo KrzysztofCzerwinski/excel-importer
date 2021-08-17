@@ -74,6 +74,14 @@ abstract class AbstractExcelImporter
     }
 
     /**
+     * Checks any additional requirements- useful to check requirements between separate cells or rows. <br>
+     * Errors can be added via ExcelRow::addErrorMessage
+     */
+    protected function checkRowRequirements(): void
+    {
+    }
+
+    /**
      * @throws ExcelFileLoadException
      * @throws EmptyExcelColumnException
      * @throws UnexpectedExcelCellClassException
@@ -98,6 +106,7 @@ abstract class AbstractExcelImporter
             }
             $this->excelRows[] = ExcelRowFactory::createFromExcelCellSkeletonsAndRawCellValues($this->skeletonExcelCells, $this->parseRawCellValuesString($rawCellValues));
         }
+        $this->checkRowRequirements();
 
         return $this;
     }
