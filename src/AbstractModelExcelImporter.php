@@ -20,15 +20,22 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
     private $modelMetadata;
 
     /** @var array */
-    private $models;
+    private $models = [];
 
     /**
      * @return array Array of models associated with ModelClass
+     *
+     * @warning Array will be empty if import has any errors
      */
     public function getModels(): array
     {
         return $this->models;
     }
+
+    /**
+     * Do something with parsed data (models available via getModels())
+     */
+    public abstract function processParsedData(): void;
 
     /**
      * @return string Fully qualified class name of model attached to this Importer instance
@@ -54,7 +61,9 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
     {
         $this->assignModelMetadata();
         parent::parseExcelData($excelFileAbsolutePath, $skipFirstRow);
-        $this->models = ModelFactory::createModelsFromExcelRowsAndModelMetadata($this->getImportModelClass(), $this->getExcelRows(), $this->modelMetadata);
+        if (!$this->hasErrors()) {
+            $this->models = ModelFactory::createModelsFromExcelRowsAndModelMetadata($this->getImportModelClass(), $this->getExcelRows(), $this->modelMetadata);
+        }
 
         return $this;
     }

@@ -6,6 +6,8 @@ namespace Kczer\ExcelImporter\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\Common\Annotations\Annotation\Required;
+use Kczer\ExcelImporter\Exception\Annotation\InvalidAnnotationParamException;
+use function is_bool;
 
 /**
  * @Annotation
@@ -46,11 +48,19 @@ class ExcelColumn
     private $required;
 
 
+    /**
+     * @throws InvalidAnnotationParamException
+     */
     public function __construct(array $annotationData)
     {
         $this->cellName = $annotationData['cellName'] ?? null;
         $this->targetExcelCellClass = $annotationData['targetExcelCellClass'];
         $this->columnKey = $annotationData['columnId'] ?? null;
+
+        $required = $annotationData['required'] ?? true;
+        if (!is_bool($required)) {
+           throw new InvalidAnnotationParamException('required', static::class, $required, 'bool');
+        }
         $this->required = $annotationData['required'] ?? true;
     }
 
