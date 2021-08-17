@@ -41,7 +41,7 @@ class ExcelColumn
     private $columnKey;
 
     /**
-     * Whether column cell are required or not
+     * Whether column cells are required or not
      *
      * @var bool
      */
