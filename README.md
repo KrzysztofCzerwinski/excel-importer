@@ -11,7 +11,6 @@
 
 # Excel-importer
 
-------------
 Excel-importer is a PHP library that enables to easy import EXCEL formats data and event parse it to objects.
 
 ## Installation
@@ -24,7 +23,6 @@ composer require kcze/excel-importer
 
 ## Documentation
 
-------------
 
 ### Creating simple EXCEL data import
 
