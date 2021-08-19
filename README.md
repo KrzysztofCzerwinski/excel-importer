@@ -16,7 +16,7 @@ Excel-importer is a PHP library that enables to easy import EXCEL formats data a
 ## Installation
 You can install it with composer like so:
 
-```
+```bash
 composer require kcze/excel-importer
 ```
 

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Kczer\ExcelImporter;
 
-use Kczer\ExcelImporter\ExcelElement\ExcelCell\Configuration\ExcelCellConfiguration;
 use Kczer\ExcelImporter\Exception\Annotation\ModelExcelColumnConfigurationException;
 use Kczer\ExcelImporter\Exception\Annotation\SetterNotCompatibleWithExcelCellValueException;
 use Kczer\ExcelImporter\Exception\EmptyExcelColumnException;
@@ -51,7 +50,6 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
     }
 
     /**
-     * @throws UnexpectedExcelCellClassException
      * @throws EmptyExcelColumnException
      * @throws ExcelFileLoadException
      * @throws ModelExcelColumnConfigurationException
@@ -68,16 +66,15 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
         return $this;
     }
 
-    protected function getExcelCellConfigurations(): array
+    /**
+     * @throws UnexpectedExcelCellClassException
+     */
+    protected function configureExcelCells(): void
     {
-        $excelCellConfigurations = [];
         foreach ($this->modelMetadata->getModelPropertiesMetadataWithConfiguredColumnKeys() as $columnKey => $propertyMetadata) {
             $propertyExcelColumn = $propertyMetadata->getExcelColumn();
 
-            $excelCellConfigurations[$columnKey] =
-                new ExcelCellConfiguration($propertyExcelColumn->getTargetExcelCellClass(), $propertyExcelColumn->getCellName(), $propertyExcelColumn->isRequired());
+            $this->addExcelCellConfiguration($propertyExcelColumn->getTargetExcelCellClass(), $propertyExcelColumn->getCellName(), $columnKey, $propertyExcelColumn->isRequired());
         }
-
-        return $excelCellConfigurations;
     }
 }

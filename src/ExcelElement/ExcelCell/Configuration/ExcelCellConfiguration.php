@@ -25,7 +25,7 @@ class ExcelCellConfiguration
      *
      * @throws UnexpectedExcelCellClassException
      */
-    public function __construct(string $excelCellClass, string $cellName,  bool $cellRequired = true)
+    public function __construct(string $excelCellClass, string $cellName, bool $cellRequired = true)
     {
         if (!is_a($excelCellClass, AbstractExcelCell::class, true)) {
 

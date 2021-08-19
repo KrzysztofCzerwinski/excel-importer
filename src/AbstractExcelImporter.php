@@ -20,6 +20,9 @@ use function key;
 
 abstract class AbstractExcelImporter
 {
+    /** @var ExcelCellConfiguration[] */
+    private $excelCellConfigurations;
+
     /** @var AbstractExcelCell[]; */
     private $skeletonExcelCells;
 
@@ -32,6 +35,14 @@ abstract class AbstractExcelImporter
     public function getExcelRows(): array
     {
         return $this->excelRows;
+    }
+
+    /**
+     * @return ExcelCellConfiguration[]
+     */
+    protected function getExcelCellConfigurations(): array
+    {
+        return $this->excelCellConfigurations;
     }
 
 
@@ -51,11 +62,9 @@ abstract class AbstractExcelImporter
 
 
     /**
-     * @return ExcelCellConfiguration[] Array with 'A-Z' or numeric keys and values and corresponding ExcelCellConfigurations as values
-     *
      * @throws UnexpectedExcelCellClassException
      */
-    protected abstract function getExcelCellConfigurations(): array;
+    protected abstract function configureExcelCells(): void;
 
     /**
      * Do something with parsed data (ExcelRows instances available via getExcelRows)
@@ -82,12 +91,23 @@ abstract class AbstractExcelImporter
     }
 
     /**
+     * @throws UnexpectedExcelCellClassException
+     */
+    protected function addExcelCellConfiguration(string $excelCellClass, string $cellName, string $columnKey, bool $cellRequired = true): self
+    {
+        $this->excelCellConfigurations[$columnKey] = new ExcelCellConfiguration($excelCellClass, $cellName, $cellRequired);
+
+        return $this;
+    }
+
+    /**
      * @throws ExcelFileLoadException
      * @throws EmptyExcelColumnException
      * @throws UnexpectedExcelCellClassException
      */
     public function parseExcelData(string $excelFileAbsolutePath, bool $skipFirstRow = true): self
     {
+        $this->configureExcelCells();
         $this->skeletonExcelCells = $this->createSkeletonExcelCells();
 
         try {
@@ -120,8 +140,6 @@ abstract class AbstractExcelImporter
      * Create ExcelCell without value (To avoid re-calling of dictionary setups which are the same for all rows).
      *
      * @return AbstractExcelCell[]
-     *
-     * @throws UnexpectedExcelCellClassException
      */
     private function createSkeletonExcelCells(): array
     {
