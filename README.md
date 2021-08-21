@@ -28,6 +28,37 @@ composer require kcze/excel-importer
 
 First you need to create Import class that extends **Kczer\ExcelImporter\AbstractExcelImporter**.
 
+For version >= 3.0:
+
+```php
+<?php
+
+namespace My\SampleNamespace;
+
+use Kczer\ExcelImporter\AbstractExcelImporter;
+use Kczer\ExcelImporter\ExcelElement\ExcelCell\Configuration\ExcelCellConfiguration;
+use Kczer\ExcelImporter\ExcelElement\ExcelCell\IntegerExcelCell;
+use Kczer\ExcelImporter\ExcelElement\ExcelCell\StringExcelCell;
+use Kczer\ExcelImporter\Exception\ExcelCellConfiguration\UnexpectedExcelCellClassException;
+
+class MySimpleExcelImporter extends AbstractExcelImporter
+{
+    protected function configureExcelCells(): void
+    {
+        $this
+            ->addExcelCell(StringExcelCell::class, 'Cell header name', 'A', false)
+            ->addExcelCell(IntegerExcelCell::class, 'Another header name', 'B');
+    }
+        
+    public function processParsedData(): void
+    {
+        // Same as in  3.0
+    }
+}
+````
+
+For version < 3.0
+
 ``` php
 <?php
 
@@ -85,6 +116,8 @@ class MySimpleExcelImporter extends AbstractExcelImporter
     }
 }
 ```
+
+> :warning: **Since version 3.0 int column keys are no longer supported**:
 
 Then using the service:
 
