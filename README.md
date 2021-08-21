@@ -117,7 +117,7 @@ class MySimpleExcelImporter extends AbstractExcelImporter
 }
 ```
 
-> :warning: **Since version 3.0 int column keys are no longer supported**:
+> :warning: **Since version 3.0 int column keys are no longer supported**.
 
 Then using the service:
 
