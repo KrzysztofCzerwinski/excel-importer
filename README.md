@@ -8,6 +8,7 @@
         + [MultipleDictionaryExcelCell](#multipledictionaryexcelcell)
         + [Custom ExcelCellClasses](#custom-excelcellclasses)
         + [More complex imports](#more-complex-imports)
+        + [Data encoding](#data-encoding)
 
 # Excel-importer
 
@@ -460,3 +461,33 @@ class DependencyValidationExcelImport extends AbstractModelExcelImporter
 ```
 
 If validation adds any error, then excel will be considered invalid, therefore models **WILL NOT** be created.
+
+### Data encoding
+
+If you want to encode data from importer (for example to send it with request), You can do it like so:
+
+```php
+<?php
+$serializedInstance = $importer->serializeInstance();
+```
+
+... and then re-create importer instance:
+
+```php
+<?php
+MyImporterClass::createFromSerialized($serializedInstance);
+```
+
+Since version 3.0, it is also possible to get rows as JSON:
+
+```php
+<?php
+$rowsJson = $importer->getExcelRowsAsJson();
+```
+
+... and then re-create rows from this JSON:
+
+```php
+<?php
+$importer->parseJson($rowsJson);
+```
