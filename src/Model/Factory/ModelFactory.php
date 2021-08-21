@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Kczer\ExcelImporter\Model\Factory;
 
-use Exception;
 use Kczer\ExcelImporter\ExcelElement\ExcelRow;
 use Kczer\ExcelImporter\Exception\Annotation\SetterNotCompatibleWithExcelCellValueException;
 use Kczer\ExcelImporter\Model\ModelMetadata;
@@ -30,7 +29,10 @@ class ModelFactory
                 $setterMethodName = $modelPropertyMetadata->getSetterName();
                 $excelCell = $excelCells[$columnKey];
                 try {
-                    $model->{$setterMethodName}($excelCell->getValue());
+                    $excelCellValue = $excelCell->getValue();
+                    if (null !== $excelCellValue) {
+                        $model->{$setterMethodName}($excelCellValue);
+                    }
                 } catch (Throwable $exception) {
 
                     throw new SetterNotCompatibleWithExcelCellValueException($excelCell, $modelPropertyMetadata, $exception);

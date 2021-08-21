@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace Kczer\ExcelImporter\Exception\Annotation;
 
-use Exception;
 use Throwable;
 
-class NotExistingModelClassException extends Exception
+class NotExistingModelClassException extends ModelExcelColumnConfigurationException
 {
     public function __construct(string $givenClass, Throwable $previous = null)
     {

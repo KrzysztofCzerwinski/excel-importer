@@ -60,6 +60,7 @@ class ExcelColumn
 
         $required = $annotationData['required'] ?? true;
         if (!is_bool($required)) {
+
            throw new InvalidAnnotationParamException('required', static::class, $required, 'bool');
         }
         $this->required = $annotationData['required'] ?? true;

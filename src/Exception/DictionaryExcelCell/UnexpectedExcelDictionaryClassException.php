@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Kczer\ExcelImporter\Exception\DictionaryExcelCell;
 
 use Kczer\ExcelImporter\ExcelElement\ExcelCell\AbstractDictionaryExcelCell;
-use Exception;
+use Kczer\ExcelImporter\Exception\ExcelImportConfigurationException;
 use Throwable;
 
-class UnexpectedExcelDictionaryClassException extends Exception
+class UnexpectedExcelDictionaryClassException extends ExcelImportConfigurationException
 {
     public function __construct(string $givenClass, Throwable $previous = null)
     {

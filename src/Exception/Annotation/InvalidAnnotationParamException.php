@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Kczer\ExcelImporter\Exception\Annotation;
 
-use Exception;
 use Throwable;
 use function gettype;
 use function is_object;
 use function sprintf;
 
-class InvalidAnnotationParamException extends Exception
+class InvalidAnnotationParamException extends ModelExcelColumnConfigurationException
 {
     public function __construct(string $paramName, string $annotationClass, $givenParam, string $expectedType, Throwable $previous = null)
     {

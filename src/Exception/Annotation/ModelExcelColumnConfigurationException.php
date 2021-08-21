@@ -3,13 +3,8 @@ declare(strict_types=1);
 
 namespace Kczer\ExcelImporter\Exception\Annotation;
 
-use Exception;
-use Throwable;
+use Kczer\ExcelImporter\Exception\ExcelImportConfigurationException;
 
-class ModelExcelColumnConfigurationException extends Exception
+class ModelExcelColumnConfigurationException extends ExcelImportConfigurationException
 {
-    public function __construct(Throwable $previous)
-    {
-        parent::__construct('[Excel configuration exception]', 0, $previous);
-    }
 }

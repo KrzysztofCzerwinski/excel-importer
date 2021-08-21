@@ -103,7 +103,7 @@ abstract class AbstractExcelImporter
      * @throws ExcelFileLoadException
      * @throws UnexpectedExcelCellClassException
      */
-    public function parseExcelData(string $excelFilePath): self
+    public function parseExcelFile(string $excelFilePath): self
     {
         try {
             $sheet = IOFactory::load($excelFilePath)->getActiveSheet();

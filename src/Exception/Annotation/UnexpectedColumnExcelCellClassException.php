@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace Kczer\ExcelImporter\Exception\Annotation;
 
-use Exception;
 use Kczer\ExcelImporter\ExcelElement\ExcelCell\AbstractExcelCell;
 use Throwable;
 
-class UnexpectedColumnExcelCellClassException extends Exception
+class UnexpectedColumnExcelCellClassException extends ModelExcelColumnConfigurationException
 {
     public function __construct(string $givenClass, string $propertyName, Throwable $previous = null)
     {

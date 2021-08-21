@@ -9,7 +9,7 @@ use ReflectionClass;
 use Throwable;
 use function sprintf;
 
-class ModelPropertyNotSettableException extends Exception
+class ModelPropertyNotSettableException extends ModelExcelColumnConfigurationException
 {
     public function __construct(ModelPropertyMetadata $modelPropertyMetadata, ReflectionClass $modelReflectionClass, Throwable $previous = null)
     {

@@ -7,6 +7,7 @@ use Kczer\ExcelImporter\Exception\Annotation\ModelExcelColumnConfigurationExcept
 use Kczer\ExcelImporter\Exception\Annotation\SetterNotCompatibleWithExcelCellValueException;
 use Kczer\ExcelImporter\Exception\EmptyExcelColumnException;
 use Kczer\ExcelImporter\Exception\ExcelCellConfiguration\UnexpectedExcelCellClassException;
+use Kczer\ExcelImporter\Exception\ExcelImportConfigurationException;
 use Kczer\ExcelImporter\Model\Factory\ModelFactory;
 use Kczer\ExcelImporter\Model\Factory\ModelMetadataFactory;
 use Kczer\ExcelImporter\Model\ModelMetadata;
@@ -43,8 +44,8 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
     /**
      * @throws UnexpectedExcelCellClassException
      * @throws EmptyExcelColumnException
-     * @throws SetterNotCompatibleWithExcelCellValueException
      * @throws ModelExcelColumnConfigurationException
+     * @throws ExcelImportConfigurationException
      */
     protected function parseRawExcelRows(array $rawExcelRows, bool $skipFirstRow = true): void
     {
@@ -68,6 +69,7 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
     }
 
     /**
+     * @throws ExcelImportConfigurationException
      * @throws ModelExcelColumnConfigurationException
      */
     private function assignModelMetadata(): void

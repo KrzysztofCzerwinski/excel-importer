@@ -11,35 +11,22 @@ use Kczer\ExcelImporter\Exception\Annotation\ModelExcelColumnConfigurationExcept
 use Kczer\ExcelImporter\Exception\Annotation\ModelPropertyNotSettableException;
 use Kczer\ExcelImporter\Exception\Annotation\NotExistingModelClassException;
 use Kczer\ExcelImporter\Exception\Annotation\UnexpectedColumnExcelCellClassException;
+use Kczer\ExcelImporter\Exception\DuplicateColumnKeyException;
+use Kczer\ExcelImporter\Exception\ExcelImportConfigurationException;
 use Kczer\ExcelImporter\Model\ModelMetadata;
 use Kczer\ExcelImporter\Model\ModelPropertyMetadata;
 use ReflectionClass;
 use ReflectionException;
 use function is_a;
+use function key_exists;
 
 class ModelMetadataFactory
 {
-
     /**
      * @throws ModelExcelColumnConfigurationException
+     * @throws ExcelImportConfigurationException
      */
     public function createMetadataFromModelClass(string $modelClass): ModelMetadata
-    {
-        try {
-
-            return $this->retrieveFromModelClass($modelClass);
-        } catch (NotExistingModelClassException | UnexpectedColumnExcelCellClassException | ModelPropertyNotSettableException | Exception $exception) {
-
-            throw new ModelExcelColumnConfigurationException($exception);
-        }
-    }
-
-    /**
-     * @throws NotExistingModelClassException
-     * @throws UnexpectedColumnExcelCellClassException
-     * @throws ModelPropertyNotSettableException
-     */
-    private function retrieveFromModelClass(string $modelClass): ModelMetadata
     {
         try {
             $modelReflectionClass = new ReflectionClass($modelClass);
@@ -59,8 +46,12 @@ class ModelMetadataFactory
             }
             $modelPropertyMetadata = (new ModelPropertyMetadata())->setExcelColumn($excelColumn)->setPropertyName($reflectionProperty->getName());
             $this->validateExcelCellClass($modelPropertyMetadata)->validatePropertySettable($modelReflectionClass, $modelPropertyMetadata);
+            $columnKey = $excelColumn->getColumnKey();
+            if (key_exists($columnKey, $modelPropertiesMetadata)) {
 
-            $modelPropertiesMetadata[$excelColumn->getColumnKey()] = $modelPropertyMetadata;
+                throw new DuplicateColumnKeyException($columnKey);
+            }
+            $modelPropertiesMetadata[$columnKey] = $modelPropertyMetadata;
         }
 
         return (new ModelMetadata())->setModelPropertiesMetadata($modelPropertiesMetadata);
