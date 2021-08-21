@@ -108,7 +108,7 @@ Predefined ExcelCell classes:
 - **StringExcelCell** - Simple string values with no validation of data. getValue() returns string.
 - **IntegerExcelCell** - Accepts only valid ints. getValue() returns int.
 - **FloatExcelCell** - Accepts only valid numbers. getValue() return float.
-- **BoolExcelCell** - Accepts 'y', 'yes', 't', 'tak', 't', 'true' (case insensitive) as true. Other values are consifered false. getValue() returns bool.
+- **BoolExcelCell** - Accepts 'y', 'yes', 't', 'tak', 't', 'true' (case insensitive) as true. Other values are considered false. getValue() returns bool.
 - **DateTimeExcelCell** - Accepts all strings acceptable by DateTime class constructor. getValue() returns DataTime object
 - **AbstractDictionaryExcelCell** - Abstract class useful for key-value types example below
 - **AbstractMultipleDictionaryExcelCell** - Abstract class that can merge a couple of AbstractDictionaryCell dictionaries into one

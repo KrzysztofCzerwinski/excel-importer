@@ -53,14 +53,14 @@ class ModelMetadataFactory
         foreach ($modelReflectionClass->getProperties() as $reflectionProperty) {
             /** @var ExcelColumn|null $excelColumn */
             $excelColumn = $reader->getPropertyAnnotation($reflectionProperty, ExcelColumn::class);
-            if ($excelColumn === null) {
+            if (null === $excelColumn) {
 
                 continue;
             }
             $modelPropertyMetadata = (new ModelPropertyMetadata())->setExcelColumn($excelColumn)->setPropertyName($reflectionProperty->getName());
             $this->validateExcelCellClass($modelPropertyMetadata)->validatePropertySettable($modelReflectionClass, $modelPropertyMetadata);
 
-            $modelPropertiesMetadata[] = $modelPropertyMetadata;
+            $modelPropertiesMetadata[$excelColumn->getColumnKey()] = $modelPropertyMetadata;
         }
 
         return (new ModelMetadata())->setModelPropertiesMetadata($modelPropertiesMetadata);
@@ -92,7 +92,7 @@ class ModelMetadataFactory
 
             throw new ModelPropertyNotSettableException($modelPropertyMetadata, $modelReflectionClass, $exception);
         }
-        if (! $setterReflection->isPublic()) {
+        if (!$setterReflection->isPublic()) {
 
             throw new ModelPropertyNotSettableException($modelPropertyMetadata, $modelReflectionClass);
         }

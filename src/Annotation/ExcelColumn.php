@@ -34,9 +34,9 @@ class ExcelColumn
     private $targetExcelCellClass;
 
     /**
-     * Column Id from EXCEL- if not provided, property order is mapped to column ids
+     * @Required()
      *
-     * @var string|null
+     * @var string
      */
     private $columnKey;
 
@@ -53,9 +53,10 @@ class ExcelColumn
      */
     public function __construct(array $annotationData)
     {
-        $this->cellName = $annotationData['cellName'] ?? null;
         $this->targetExcelCellClass = $annotationData['targetExcelCellClass'];
-        $this->columnKey = $annotationData['columnId'] ?? null;
+
+        $this->columnKey = $annotationData['columnKey'];
+        $this->cellName = $annotationData['cellName'] ?? '';
 
         $required = $annotationData['required'] ?? true;
         if (!is_bool($required)) {
@@ -74,7 +75,7 @@ class ExcelColumn
         return $this->targetExcelCellClass;
     }
 
-    public function getColumnKey(): ?string
+    public function getColumnKey(): string
     {
         return $this->columnKey;
     }

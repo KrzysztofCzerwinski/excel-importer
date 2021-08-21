@@ -13,15 +13,10 @@ class EmptyExcelColumnException extends Exception
     /** @var AbstractExcelCell */
     private $excelCell;
 
-    /** @var string|int */
+    /** @var string */
     private $columnKey;
 
-    /**
-     * @param AbstractExcelCell $excelCell
-     * @param string|int $columnKey
-     * @param Throwable|null $previous
-     */
-    public function __construct(AbstractExcelCell $excelCell, $columnKey, Throwable $previous = null)
+    public function __construct(AbstractExcelCell $excelCell, string $columnKey, Throwable $previous = null)
     {
         $this->excelCell = $excelCell;
         $this->columnKey = $columnKey;
@@ -39,7 +34,7 @@ class EmptyExcelColumnException extends Exception
     }
 
     /**
-     * @return int|string
+     * @return string
      */
     public function getColumnKey()
     {

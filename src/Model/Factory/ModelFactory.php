@@ -7,6 +7,7 @@ use Exception;
 use Kczer\ExcelImporter\ExcelElement\ExcelRow;
 use Kczer\ExcelImporter\Exception\Annotation\SetterNotCompatibleWithExcelCellValueException;
 use Kczer\ExcelImporter\Model\ModelMetadata;
+use Throwable;
 
 class ModelFactory
 {
@@ -15,7 +16,7 @@ class ModelFactory
      * @param ExcelRow[] $excelRows
      * @param ModelMetadata $modelMetadata
      *
-     * @return array array of models associated with ModelImport class
+     * @return array Array of models associated with ModelImport class
      *
      * @throws SetterNotCompatibleWithExcelCellValueException
      */
@@ -25,12 +26,12 @@ class ModelFactory
         foreach ($excelRows as $excelRow) {
             $model = new $modelClass();
             $excelCells = $excelRow->getExcelCells();
-            foreach ($modelMetadata->getModelPropertiesMetadataWithConfiguredColumnKeys() as $columnKey => $modelPropertyMetadata) {
+            foreach ($modelMetadata->getModelPropertiesMetadata() as $columnKey => $modelPropertyMetadata) {
                 $setterMethodName = $modelPropertyMetadata->getSetterName();
                 $excelCell = $excelCells[$columnKey];
                 try {
                     $model->{$setterMethodName}($excelCell->getValue());
-                } catch (Exception $exception) {
+                } catch (Throwable $exception) {
 
                     throw new SetterNotCompatibleWithExcelCellValueException($excelCell, $modelPropertyMetadata, $exception);
                 }

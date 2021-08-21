@@ -79,4 +79,17 @@ class ExcelRow
             )
         );
     }
+
+    /**
+     * @return string[] Key are column keys. Values are rawValues from EXCEL file
+     */
+    public function toArray(): array
+    {
+        $excelCells = [];
+        foreach ($this->excelCells as $columnKey => $excelCell) {
+            $excelCells[$columnKey] = $excelCell->getRawValue();
+        }
+
+        return $excelCells;
+    }
 }

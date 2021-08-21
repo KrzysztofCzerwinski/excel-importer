@@ -49,6 +49,11 @@ abstract class AbstractExcelCell
         $this->errorMessage = $errorMessage;
     }
 
+    public function getRawValue(): string
+    {
+        return (string)$this->rawValue;
+    }
+
     public function getDisplayValue(): string
     {
         return (string)$this->rawValue;

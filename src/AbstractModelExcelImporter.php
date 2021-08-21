@@ -7,7 +7,6 @@ use Kczer\ExcelImporter\Exception\Annotation\ModelExcelColumnConfigurationExcept
 use Kczer\ExcelImporter\Exception\Annotation\SetterNotCompatibleWithExcelCellValueException;
 use Kczer\ExcelImporter\Exception\EmptyExcelColumnException;
 use Kczer\ExcelImporter\Exception\ExcelCellConfiguration\UnexpectedExcelCellClassException;
-use Kczer\ExcelImporter\Exception\ExcelFileLoadException;
 use Kczer\ExcelImporter\Model\Factory\ModelFactory;
 use Kczer\ExcelImporter\Model\Factory\ModelMetadataFactory;
 use Kczer\ExcelImporter\Model\ModelMetadata;
@@ -42,28 +41,18 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
     protected abstract function getImportModelClass(): string;
 
     /**
-     * @throws ModelExcelColumnConfigurationException
-     */
-    private function assignModelMetadata(): void
-    {
-        $this->modelMetadata = (new ModelMetadataFactory())->createMetadataFromModelClass($this->getImportModelClass());
-    }
-
-    /**
+     * @throws UnexpectedExcelCellClassException
      * @throws EmptyExcelColumnException
-     * @throws ExcelFileLoadException
-     * @throws ModelExcelColumnConfigurationException
      * @throws SetterNotCompatibleWithExcelCellValueException
+     * @throws ModelExcelColumnConfigurationException
      */
-    public function parseExcelData(string $excelFileAbsolutePath, bool $skipFirstRow = true): AbstractExcelImporter
+    protected function parseRawExcelRows(array $rawExcelRows, bool $skipFirstRow = true): void
     {
         $this->assignModelMetadata();
-        parent::parseExcelData($excelFileAbsolutePath, $skipFirstRow);
+        parent::parseRawExcelRows($rawExcelRows, $skipFirstRow);
         if (!$this->hasErrors()) {
             $this->models = ModelFactory::createModelsFromExcelRowsAndModelMetadata($this->getImportModelClass(), $this->getExcelRows(), $this->modelMetadata);
         }
-
-        return $this;
     }
 
     /**
@@ -71,10 +60,18 @@ abstract class AbstractModelExcelImporter extends AbstractExcelImporter
      */
     protected function configureExcelCells(): void
     {
-        foreach ($this->modelMetadata->getModelPropertiesMetadataWithConfiguredColumnKeys() as $columnKey => $propertyMetadata) {
+        foreach ($this->modelMetadata->getModelPropertiesMetadata() as $columnKey => $propertyMetadata) {
             $propertyExcelColumn = $propertyMetadata->getExcelColumn();
 
-            $this->addExcelCellConfiguration($propertyExcelColumn->getTargetExcelCellClass(), $propertyExcelColumn->getCellName(), $columnKey, $propertyExcelColumn->isRequired());
+            $this->addExcelCell($propertyExcelColumn->getTargetExcelCellClass(), $propertyExcelColumn->getCellName(), $columnKey, $propertyExcelColumn->isRequired());
         }
+    }
+
+    /**
+     * @throws ModelExcelColumnConfigurationException
+     */
+    private function assignModelMetadata(): void
+    {
+        $this->modelMetadata = (new ModelMetadataFactory())->createMetadataFromModelClass($this->getImportModelClass());
     }
 }

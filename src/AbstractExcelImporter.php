@@ -12,19 +12,18 @@ use Kczer\ExcelImporter\Exception\ExcelCellConfiguration\UnexpectedExcelCellClas
 use Kczer\ExcelImporter\Exception\ExcelFileLoadException;
 use Kczer\ExcelImporter\Exception\InvalidExcelImporterSerializedDataException;
 use Kczer\ExcelImporter\Exception\EmptyExcelColumnException;
-use Exception;
+use Kczer\ExcelImporter\Exception\JsonExcelRowsLoadException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use function array_keys;
-use function count;
+use Throwable;
+use function array_map;
+use function json_decode;
+use function json_encode;
 use function key;
 
 abstract class AbstractExcelImporter
 {
     /** @var ExcelCellConfiguration[] */
     private $excelCellConfigurations;
-
-    /** @var AbstractExcelCell[]; */
-    private $skeletonExcelCells;
 
     /** @var ExcelRow[] */
     private $excelRows;
@@ -83,6 +82,74 @@ abstract class AbstractExcelImporter
     }
 
     /**
+     * @throws EmptyExcelColumnException
+     * @throws JsonExcelRowsLoadException
+     * @throws UnexpectedExcelCellClassException
+     */
+    public function parseJson(string $jsonExcelRows): self
+    {
+        $rawExcelRows = json_decode($jsonExcelRows, true);
+        if (null === $rawExcelRows) {
+
+            throw new JsonExcelRowsLoadException($jsonExcelRows);
+        }
+        $this->parseRawExcelRows($rawExcelRows, false);
+
+        return $this;
+    }
+
+    /**
+     * @throws EmptyExcelColumnException
+     * @throws ExcelFileLoadException
+     * @throws UnexpectedExcelCellClassException
+     */
+    public function parseExcelData(string $excelFilePath): self
+    {
+        try {
+            $sheet = IOFactory::load($excelFilePath)->getActiveSheet();
+            $rawExcelRows = $sheet->toArray('', true, true, true);
+        } catch (Throwable $exception) {
+
+            throw new ExcelFileLoadException($excelFilePath, $exception);
+        }
+        $this->parseRawExcelRows($rawExcelRows);
+
+        return $this;
+    }
+
+    public function getExcelRowsAsJson(): string
+    {
+        return json_encode(
+            array_map(static function (ExcelRow $excelRow): array {
+                return $excelRow->toArray();
+            }, $this->excelRows)
+        );
+    }
+
+    public function serializeInstance(): string
+    {
+        return base64_encode(serialize($this));
+    }
+
+    /**
+     * @throws EmptyExcelColumnException
+     * @throws UnexpectedExcelCellClassException
+     */
+    protected function parseRawExcelRows(array $rawExcelRows, bool $skipFirstRow = true): void
+    {
+        $this->configureExcelCells();
+        $skeletonExcelCells = $this->createSkeletonExcelCells();
+        foreach ($rawExcelRows as $rowKey => $rawCellValues) {
+            if ($skipFirstRow && key($rawExcelRows) === $rowKey) {
+
+                continue;
+            }
+            $this->excelRows[] = ExcelRowFactory::createFromExcelCellSkeletonsAndRawCellValues($skeletonExcelCells, $this->parseRawCellValuesString($rawCellValues));
+        }
+        $this->checkRowRequirements();
+    }
+
+    /**
      * Checks any additional requirements- useful to check requirements between separate cells or rows. <br>
      * Errors can be added via ExcelRow::addErrorMessage
      */
@@ -93,47 +160,11 @@ abstract class AbstractExcelImporter
     /**
      * @throws UnexpectedExcelCellClassException
      */
-    protected function addExcelCellConfiguration(string $excelCellClass, string $cellName, string $columnKey, bool $cellRequired = true): self
+    protected function addExcelCell(string $excelCellClass, string $cellName, string $columnKey, bool $cellRequired = true): self
     {
         $this->excelCellConfigurations[$columnKey] = new ExcelCellConfiguration($excelCellClass, $cellName, $cellRequired);
 
         return $this;
-    }
-
-    /**
-     * @throws ExcelFileLoadException
-     * @throws EmptyExcelColumnException
-     * @throws UnexpectedExcelCellClassException
-     */
-    public function parseExcelData(string $excelFileAbsolutePath, bool $skipFirstRow = true): self
-    {
-        $this->configureExcelCells();
-        $this->skeletonExcelCells = $this->createSkeletonExcelCells();
-
-        try {
-            $sheet = IOFactory::load($excelFileAbsolutePath)->getActiveSheet();
-
-            $rawExcelRows = $sheet->toArray('', true, true, !$this->areConfigurationKeysIntegers());
-        } catch (Exception $exception) {
-
-            throw new ExcelFileLoadException($excelFileAbsolutePath, $exception);
-        }
-
-        foreach ($rawExcelRows as $rowKey => $rawCellValues) {
-            if (key($rawExcelRows) === $rowKey) {
-
-                continue;
-            }
-            $this->excelRows[] = ExcelRowFactory::createFromExcelCellSkeletonsAndRawCellValues($this->skeletonExcelCells, $this->parseRawCellValuesString($rawCellValues));
-        }
-        $this->checkRowRequirements();
-
-        return $this;
-    }
-
-    public function serializeInstance(): string
-    {
-        return base64_encode(serialize($this));
     }
 
     /**
@@ -149,11 +180,6 @@ abstract class AbstractExcelImporter
         }
 
         return $initialExcelCells;
-    }
-
-    private function areConfigurationKeysIntegers(): bool
-    {
-        return array_keys($this->skeletonExcelCells) === range(0, count($this->skeletonExcelCells) - 1);
     }
 
     /**

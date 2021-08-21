@@ -9,30 +9,15 @@ use function in_array;
 
 class ModelMetadata
 {
-    /** @var ModelPropertyMetadata[] */
+    /** @var ModelPropertyMetadata[] Keys are column keys */
     private $modelPropertiesMetadata;
 
     /**
-     * @return ModelPropertyMetadata[] Keys are 0- indexed keys
+     * @return ModelPropertyMetadata[] Keys are column keys
      */
-    public function getModelPropertiesMetadataWithIntKeys(): array
+    public function getModelPropertiesMetadata(): array
     {
         return $this->modelPropertiesMetadata;
-    }
-
-    /**
-     * @return ModelPropertyMetadata[] Keys are column ids if all properties ExcelCells have columnId defined
-     */
-    public function getModelPropertiesMetadataWithConfiguredColumnKeys(): array
-    {
-        $haveAllPropertiesColumnIds = $this->haveAllPropertiesColumnIds();
-
-        $modelPropertiesMetadata = [];
-        foreach ($this->modelPropertiesMetadata as $index => $modelPropertyMetadata) {
-            $modelPropertiesMetadata[$haveAllPropertiesColumnIds ? $modelPropertyMetadata->getExcelColumn()->getColumnKey() : $index] = $modelPropertyMetadata;
-        }
-
-        return $modelPropertiesMetadata;
     }
 
     /**
@@ -43,15 +28,5 @@ class ModelMetadata
         $this->modelPropertiesMetadata = $modelPropertiesMetadata;
 
         return $this;
-    }
-
-    public function haveAllPropertiesColumnIds(): bool
-    {
-        return !in_array(false,
-            array_map(static function (ModelPropertyMetadata $modelPropertyMetadata): bool {
-                return $modelPropertyMetadata->hasColumnId();
-            }, $this->modelPropertiesMetadata),
-            true
-        );
     }
 }
