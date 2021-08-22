@@ -3,7 +3,7 @@
 namespace Kczer\ExcelImporter\ExcelElement\ExcelCell;
 
 /**
- * A Standard excel cell type, that doesn't require any special validations
+ * A Standard EXCEL cell type, that doesn't require any special validations
  */
 class StringExcelCell extends AbstractExcelCell
 {

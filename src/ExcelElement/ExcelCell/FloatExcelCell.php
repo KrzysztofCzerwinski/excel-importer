@@ -5,7 +5,7 @@ namespace Kczer\ExcelImporter\ExcelElement\ExcelCell;
 use Kczer\ExcelImporter\MessageInterface;
 
 /**
- * An excell cell that requires value to be a valid number
+ * An EXCEL cell that requires value to be a valid number
  */
 class FloatExcelCell extends AbstractExcelCell
 {

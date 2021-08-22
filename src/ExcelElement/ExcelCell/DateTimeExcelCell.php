@@ -9,7 +9,7 @@ use Exception;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 /**
- * An Excel cell that requires value to be string acceptable by DateTime constructor
+ * An EXCEL cell that requires value to be string acceptable by DateTime constructor
  */
 class DateTimeExcelCell extends AbstractExcelCell
 {

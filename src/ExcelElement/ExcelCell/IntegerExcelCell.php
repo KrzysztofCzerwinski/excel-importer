@@ -7,7 +7,7 @@ use Kczer\ExcelImporter\MessageInterface;
 use function ctype_digit;
 
 /**
- * Integer excell cell that requires value to be a valid int
+ * Integer EXCEL cell that requires value to be a valid int
  */
 class IntegerExcelCell extends AbstractExcelCell
 {

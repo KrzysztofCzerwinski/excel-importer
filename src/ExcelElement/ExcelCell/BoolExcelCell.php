@@ -6,6 +6,9 @@ namespace Kczer\ExcelImporter\ExcelElement\ExcelCell;
 use function in_array;
 use function strtolower;
 
+/**
+ * An EXCEL cell that treats strings defined in SUPPORTED_TRUE_VALUES as true, an others as false
+ */
 class BoolExcelCell extends AbstractExcelCell
 {
 

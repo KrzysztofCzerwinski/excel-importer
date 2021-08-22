@@ -7,7 +7,7 @@ use Kczer\ExcelImporter\MessageInterface;
 use function key_exists;
 
 /**
- * Excel cell type that requires value to be in a certain range (specified by getDictionary method)
+ * EXCEL cell type that requires value to be in a certain range (specified by getDictionary method)
  */
 abstract class AbstractDictionaryExcelCell extends AbstractExcelCell
 {
