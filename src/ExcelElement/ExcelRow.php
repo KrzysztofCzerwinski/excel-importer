@@ -87,7 +87,7 @@ class ExcelRow
     {
         $excelCells = [];
         foreach ($this->excelCells as $columnKey => $excelCell) {
-            $excelCells[$columnKey] = $excelCell->getRawValue();
+            $excelCells[$columnKey] = (string)$excelCell->getRawValue();
         }
 
         return $excelCells;
