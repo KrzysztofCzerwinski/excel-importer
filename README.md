@@ -53,7 +53,12 @@ class MySimpleExcelImporter extends AbstractExcelImporter
         
     public function processParsedData(): void
     {
-        // Same as in  3.0
+        // Since 3.1, you can pass callback as first argument to this function to modify the message
+        // Separator is now the second parameter
+        $excelRow->getMergedErrorMessage(static function(string $message): string {
+            //Do something with the message
+        }); 
+        // The rest is same as before 3.0
     }
 }
 ````
@@ -133,6 +138,8 @@ $importer = new MySimpleExcelImporter();
 $importer->parseExcelData('some/file/path/excelFile.xlsx', true);
 $importer->processParsedData();
 ```
+
+> :warning: **Since version 3.0 importer always omits first row**.
 
 All methods shown in **processParsedData()** are public and therefore can be accessed from outside the service.
 As You could see in Configuration above there StringExcelCell and IntegerExcelCell classes used. These classes are used to perform proper parsing and validations on EXCEL cell values.
