@@ -16,7 +16,7 @@ class ExcelRow
     private $excelCells;
 
     /** @var string[] */
-    private $errorMessages = [];
+    private $rowRelatedErrorMessages = [];
 
     /**
      * @param AbstractExcelCell[] $excelCells
@@ -26,7 +26,6 @@ class ExcelRow
         $this->excelCells = $excelCells;
     }
 
-
     /**
      * @return AbstractExcelCell[]
      */
@@ -35,23 +34,29 @@ class ExcelRow
         return $this->excelCells;
     }
 
+    public function addErrorMessage(string $errorMessage): void
+    {
+        $this->rowRelatedErrorMessages[] = $errorMessage;
+    }
+
     /**
      * @return string[]
      */
-    public function getErrorMessages(): array
+    public function getAllErrorMessages(): array
     {
-        return $this->errorMessages;
-    }
-
-
-    public function addErrorMessage(string $errorMessage): void
-    {
-        $this->errorMessages[] = $errorMessage;
+        return array_filter(
+            array_merge(
+                $this->rowRelatedErrorMessages,
+                array_map(static function (AbstractExcelCell $excelCell): ?string {
+                    return $excelCell->getErrorMessage();
+                }, $this->excelCells)
+            )
+        );
     }
 
     public function hasErrors(): bool
     {
-        return !empty($this->errorMessages) ||
+        return !empty($this->rowRelatedErrorMessages) ||
             in_array(
                 true,
                 array_map(static function (AbstractExcelCell $excelCell): bool {
@@ -61,23 +66,18 @@ class ExcelRow
     }
 
     /**
+     * @param callable|null $messageTransformer <br>
+     * Callback function applied to each message (takes one string argument and should return string)
      * @param string $separator string used to separate the messages
      *
      * @return string messages from all ExcelCells merged into one string
      */
-    public function getMergedErrorMessage(string $separator = ' | '): string
+    public function getMergedAllErrorMessages(?callable $messageTransformer = null, string $separator = ' | '): string
     {
-        return implode(
-            $separator,
-            array_filter(
-                array_merge(
-                    $this->errorMessages,
-                    array_map(static function (AbstractExcelCell $excelCell) use ($separator): ?string {
-                        return $excelCell->getErrorMessage();
-                    }, $this->excelCells)
-                )
-            )
-        );
+        $errorMessages = $this->getAllErrorMessages();
+        $errorMessages = null !== $messageTransformer ? array_map($messageTransformer, $errorMessages) : $errorMessages;
+
+        return implode($separator, $errorMessages);
     }
 
     /**
